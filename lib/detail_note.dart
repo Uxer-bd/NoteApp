@@ -51,7 +51,16 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         title: _titleController.text,
         content: _contentController.text,
         creationDate: _currentDate,
+        isCompleted: widget.note?.isCompleted ?? false,
       );
+
+      if (widget.note == null) {
+      // Mode Ajout (CREATE)
+        await _dbService.insertNote(updatedNote);
+      } else {
+        // Mode Modification (UPDATE)
+        await _dbService.updateNote(updatedNote);
+      }
     }
     widget.onSave();
     Navigator.of(context).pop();

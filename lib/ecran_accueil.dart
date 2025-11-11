@@ -64,6 +64,21 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadNotes();
   }
 
+  void _toggleCompletion(Note note, bool? newValue) async {
+  if (newValue == null) return;
+
+  final updatedNote = Note(
+    id: note.id,
+    title: note.title,
+    content: note.content,
+    creationDate: note.creationDate,
+    isCompleted: newValue,
+  );
+
+  await _dbService.updateNote(updatedNote);
+  _loadNotes();
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +105,27 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: _filteredNotes.length,
               itemBuilder: (context, index) {
                 final note = _filteredNotes[index];
-                return ListTile(
-                  title: Text(note.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                return CheckboxListTile(
+                  value: note.isCompleted,
+                  onChanged: (bool? newValue) => _toggleCompletion(note, newValue),
+                  title: Text(note.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    decoration: note.isCompleted ? TextDecoration.lineThrough : null,
+                    )),
                   subtitle: Text('Créé le: ${note.formattedDate}'),
-                  trailing: Row(
+                  secondary: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-
+                      if (note.isCompleted)
+                        const Padding(
+                          padding: EdgeInsets.only(right: 8.0),
+                          child: Chip(
+                            labelPadding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                            label: Text('Terminé', style: TextStyle(color: Colors.white, fontSize: 8)),
+                            backgroundColor: Colors.green,
+                          ),
+                        ),
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () => _goToEditNote(note),
@@ -108,7 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  onTap: () => _goToEditNote(note),
                 );
               },
             ),

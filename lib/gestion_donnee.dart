@@ -26,7 +26,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE $notesTableName(
@@ -37,6 +37,14 @@ class DatabaseService {
           )
         ''');
       },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Si on passe d'une version < 2 à la version 2, ajouter la colonne
+          await db.execute(
+            'ALTER TABLE notes ADD COLUMN isCompleted INTEGER DEFAULT 0',
+          );
+        }
+      },
     );
   }
 
@@ -45,14 +53,21 @@ class DatabaseService {
   // Ajout d'une note
   Future<int> insertNote(Note note) async {
     final db = await database;
-    return await db.insert(notesTableName, note.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(
+      notesTableName,
+      note.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   // Récupération de toutes les notes
   Future<List<Note>> getAllNotes() async {
     final db = await database;
     // Trie par date de création du plus récent au plus ancien
-    final List<Map<String, dynamic>> maps = await db.query(notesTableName, orderBy: 'creationDate DESC'); 
+    final List<Map<String, dynamic>> maps = await db.query(
+      notesTableName,
+      orderBy: 'creationDate DESC',
+    );
 
     return List.generate(maps.length, (i) {
       return Note.fromMap(maps[i]);

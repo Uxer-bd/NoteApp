@@ -5,12 +5,14 @@ class Note {
   String title;
   String content;
   DateTime creationDate;
+  bool isCompleted;
 
   Note({
     this.id,
     required this.title,
     required this.content,
     required this.creationDate,
+    this.isCompleted = false
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class Note {
       'title': title,
       'content': content,
       'creationDate': creationDate.toIso8601String(),
+      'isCompleted': isCompleted ? 1 : 0,
     };
   }
 
@@ -28,6 +31,7 @@ class Note {
       title: map['title'],
       content: map['content'],
       creationDate: DateTime.parse(map['creationDate']),
+      isCompleted: map['isCompleted'] == 1
     );
   }
 
