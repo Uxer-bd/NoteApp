@@ -108,24 +108,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 return CheckboxListTile(
                   value: note.isCompleted,
                   onChanged: (bool? newValue) => _toggleCompletion(note, newValue),
-                  title: Text(note.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    decoration: note.isCompleted ? TextDecoration.lineThrough : null,
-                    )),
+                  title: Column (
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children : [
+                      if (note.isCompleted)
+                        const Text(
+                          'Terminé',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        Text(
+                        note.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: note.isCompleted ? TextDecoration.lineThrough : null,
+                        ),
+                      ),
+                    ],
+                  ),
                   subtitle: Text('Créé le: ${note.formattedDate}'),
                   secondary: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (note.isCompleted)
-                        const Padding(
-                          padding: EdgeInsets.only(right: 8.0),
-                          child: Chip(
-                            labelPadding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
-                            label: Text('Terminé', style: TextStyle(color: Colors.white, fontSize: 8)),
-                            backgroundColor: Colors.green,
-                          ),
-                        ),
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () => _goToEditNote(note),
