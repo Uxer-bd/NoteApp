@@ -53,6 +53,11 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              'assets/images/image4.png',
+              height: 120,
+            ),
+            const SizedBox(height: 30),
             const Text(
               'Bienvenue sur votre application de notes!',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
